@@ -24,9 +24,22 @@ namespace Blog.Controllers
             DbContext = new ApplicationDbContext();
         }
 
+        [HttpGet]
         public ActionResult Index()
         {
-            return View();
+            var model = (from b in DbContext.Posts
+                         where b.Published == true
+                         select new IndexBlogViewModel
+                         {
+                             Id = b.Id,
+                             Title = b.Title,
+                             Subtitle = b.Subtitle,
+                             Body = b.Body,
+                             UserName = b.User.UserName,
+                             DateCreated = b.DateCreated,
+                             DateUpdated = b.DateUpdated
+                         }).ToList();
+            return View(model);
         }
 
         [HttpGet]
@@ -46,13 +59,14 @@ namespace Blog.Controllers
                              Id = post.Id,
                              Title = post.Title,
                              Published = post.Published,
-                             DateCreated = post.DateCreated
+                             DateCreated = post.DateCreated,
+                             DateUpdated = post.DateUpdated
                          }).ToList();
 
-            if(model == null)
+            if (model == null)
             {
                 return RedirectToAction(nameof(BlogController.Index));
-            }            
+            }
 
             return View(model);
         }
@@ -67,40 +81,11 @@ namespace Blog.Controllers
         [HttpPost]
         public ActionResult Create(CreateViewModel model)
         {
-            var fileExtension = Path.GetExtension(model.Photo.FileName).ToLower();
-
-            if (!AllowedExtenions.Contains(fileExtension))
+            if (model.Body == null || model.Photo == null)
             {
-                ModelState.AddModelError("", "File extension is not allowed");
                 return View();
             }
 
-            var post = new Post();
-            post.Title = model.Title;
-            post.Subtitle = model.Subtitle;
-            post.Body = model.Body;
-            post.Published = model.Published;
-            post.PhotoUrl = UploadFile(model.Photo);
-
-            var userId = User.Identity.GetUserId();
-            post.UserId = userId;            
-
-            DbContext.Posts.Add(post);
-            DbContext.SaveChanges();
-
-            return RedirectToAction(nameof(BlogController.ManagePosts));
-        }
-
-        [HttpGet]
-        [Authorize(Roles = "Admin")]
-        public ActionResult Edit()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public ActionResult Edit(int? id, EditViewModel model)
-        {
             var fileExtension = Path.GetExtension(model.Photo.FileName).ToLower();
 
             if (!AllowedExtenions.Contains(fileExtension))
@@ -121,6 +106,97 @@ namespace Blog.Controllers
 
             DbContext.Posts.Add(post);
             DbContext.SaveChanges();
+
+            return RedirectToAction(nameof(BlogController.ManagePosts));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public ActionResult Edit(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(BlogController.ManagePosts));
+            }
+
+            var model = (from b in DbContext.Posts
+                         where b.Id == id
+                         select new EditViewModel
+                         {
+                             Title = b.Title,
+                             Subtitle = b.Subtitle,
+                             Body = b.Body,
+                             Published = b.Published,
+                             PhotoUrl = b.PhotoUrl
+                         }).FirstOrDefault();
+
+            if (model == null)
+            {
+                ModelState.AddModelError("", "Post not found.");
+                return View();
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Edit(int? id, EditViewModel model)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(BlogController.ManagePosts));
+            }
+
+            if (model.Body == null || model.Photo == null)
+            {
+                return View();
+            }
+
+            var fileExtension = Path.GetExtension(model.Photo.FileName).ToLower();
+
+            if (!AllowedExtenions.Contains(fileExtension))
+            {
+                ModelState.AddModelError("", "File extension is not allowed");
+                return View();
+            }
+
+            var userId = User.Identity.GetUserId();
+
+            var postToEdit = (from b in DbContext.Posts
+                              where b.Id == id &&  b.UserId == userId
+                              select b).FirstOrDefault();
+
+            postToEdit.Title = model.Title;
+            postToEdit.Subtitle = model.Subtitle;
+            postToEdit.Body = model.Body;
+            postToEdit.Published = model.Published;
+            postToEdit.DateUpdated = DateTime.Now;
+            postToEdit.PhotoUrl = UploadFile(model.Photo);
+
+            DbContext.SaveChanges();
+
+            return RedirectToAction(nameof(BlogController.ManagePosts));
+        }
+
+        [HttpPost]
+        public ActionResult Delete(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(BlogController.ManagePosts));
+            }
+
+            var userId = User.Identity.GetUserId();
+
+            var postToDelete = (from b in DbContext.Posts
+                                where b.Id == id && b.UserId == userId
+                                select b).FirstOrDefault();
+
+            if(postToDelete != null)
+            {
+                DbContext.Posts.Remove(postToDelete);
+                DbContext.SaveChanges();
+            }
 
             return RedirectToAction(nameof(BlogController.ManagePosts));
         }

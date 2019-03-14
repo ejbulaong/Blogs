@@ -21,5 +21,6 @@ namespace Blog.Models.ViewModels
         public DateTime? DateUpdated { get; set; }
         [Required]
         public HttpPostedFileBase Photo { get; set; }
+        public string PhotoUrl { get; set; }
     }
 }

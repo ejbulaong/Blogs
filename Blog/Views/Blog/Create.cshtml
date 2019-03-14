@@ -8,7 +8,7 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script src="~/Scripts/tinymce/tinymce.min.js"></script>
     <script src="~/Scripts/tinymce/jquery.tinymce.min.js"></script>
-    <script src="~/Scripts/CreateBlog.js"></script>
+    <script src="~/Scripts/CreateEditBlog.js"></script>
 }
 
 <h1>.</h1>
@@ -33,15 +33,16 @@
     </div>
 
     <div class="form-group">
+        @Html.LabelFor(blog => blog.Photo, "Photo:")
         <input type="file" name="Photo" />
     </div>
 
     <div class="form-group">
         @Html.Label("Publish: ")
-        @Html.LabelFor(blog => blog.Subtitle, "Yes")
+        @Html.LabelFor(blog => blog.Published, "Yes")
         @Html.RadioButtonFor(blog => blog.Published, true)
-        @Html.LabelFor(blog => blog.Subtitle, "No")
-        @Html.RadioButtonFor(blog => blog.Published, false)
+        @Html.LabelFor(blog => blog.Published, "No")
+        @Html.RadioButtonFor(blog => blog.Published, false, new { @checked = "checked" })
     </div>
 
     <div class="">
