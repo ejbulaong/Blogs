@@ -1,0 +1,51 @@
+﻿@model CreateViewModel
+
+@{
+    ViewBag.Title = "Create New Post";
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/tinymce/tinymce.min.js"></script>
+    <script src="~/Scripts/tinymce/jquery.tinymce.min.js"></script>
+    <script src="~/Scripts/CreateBlog.js"></script>
+}
+
+<h1>.</h1>
+<h2>@ViewBag.Title</h2>
+
+<form method="post" enctype="multipart/form-data">
+    @Html.ValidationSummary(false)
+
+    <div class="form-group">
+        @Html.LabelFor(blog => blog.Title, "Title:")
+        @Html.TextBoxFor(blog => blog.Title, new { @class = "form-control", placeholder = "Title" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(blog => blog.Subtitle, "Subtitle:")
+        @Html.TextBoxFor(blog => blog.Subtitle, new { @class = "form-control", placeholder = "Subtitle" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(blog => blog.Body, "Body:")
+        @Html.TextAreaFor(blog => blog.Body, new { @class = "form-control", placeholder = "Body", rows = 5, columns = 5 })
+    </div>
+
+    <div class="form-group">
+        <input type="file" name="Photo" />
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Publish: ")
+        @Html.LabelFor(blog => blog.Subtitle, "Yes")
+        @Html.RadioButtonFor(blog => blog.Published, true)
+        @Html.LabelFor(blog => blog.Subtitle, "No")
+        @Html.RadioButtonFor(blog => blog.Published, false)
+    </div>
+
+    <div class="">
+        <button type="submit" class="btn btn-success">Submit</button>
+    </div>
+</form>
+
