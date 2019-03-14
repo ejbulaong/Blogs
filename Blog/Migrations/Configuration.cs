@@ -97,7 +97,7 @@ namespace Blog.Migrations
             if (!userManager.IsInRole(moderator.Id, "Moderator"))
             {
                 userManager.AddToRole(moderator.Id, "Moderator");
-            }
+            }            
         }
     }
 }

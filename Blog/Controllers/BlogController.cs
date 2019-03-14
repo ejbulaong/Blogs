@@ -43,6 +43,37 @@ namespace Blog.Controllers
         }
 
         [HttpGet]
+        public ActionResult BlogPost(int? id)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(BlogController.Index));
+            }
+
+            var userId = User.Identity.GetUserId();
+            
+            if (userId == null)
+            {
+                return RedirectToAction(nameof(AccountController.Login), "Account");
+            }
+
+            var model = (from b in DbContext.Posts
+                         where b.Id == id
+                         select new BlogPostViewModel
+                         {
+                             Id = b.Id,
+                             Title = b.Title,
+                             Subtitle = b.Subtitle,
+                             Body = b.Body,
+                             UserName = b.User.UserName,
+                             PhotoUrl = b.PhotoUrl,
+                             DateCreated = b.DateCreated,
+                             DateUpdated = b.DateUpdated
+                         }).FirstOrDefault();
+            return View(model);
+        }
+
+        [HttpGet]
         [Authorize(Roles = "Admin")]
         public ActionResult ManagePosts()
         {

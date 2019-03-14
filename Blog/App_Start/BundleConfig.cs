@@ -24,7 +24,8 @@ namespace Blog
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/vendor/bootstrap/css/bootstrap.min.css",
-                      "~/Content/css/clean-blog.min.css"));
+                      "~/Content/css/clean-blog.min.css",
+                      "~/Content/vendor/bootstrap/css/bootstrap.min.css"));
         }
     }
 }

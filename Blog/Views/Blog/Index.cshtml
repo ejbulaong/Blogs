@@ -31,7 +31,7 @@ else
                 @foreach (var record in Model)
                 {
                     <div class="post-preview">
-                        <a href="@Url.Action("SamplePost", "Blog", new { id = record.Id })">
+                        <a href="@Url.Action("BlogPost", "Blog", new { id = record.Id })">
                             <h2 class="post-title">
                                 @record.Title
                             </h2>
