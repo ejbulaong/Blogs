@@ -10,51 +10,53 @@
         <div class="row">
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="site-heading">
-                    <h1>Home</h1>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-@if (!Model.Any())
-{
-    <div style="margin-top:15px;">
-        <p><strong>You have no blogs</strong></p>
-    </div>
-}
-else
-{
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-md-10 mx-auto">
-                @foreach (var record in Model)
-                {
-                    <div class="post-preview">
-                        <a href="@Url.Action("BlogPost", "Blog", new { id = record.Id })">
-                            <h2 class="post-title">
-                                @record.Title
-                            </h2>
-                            <h3 class="post-subtitle">
-                                @record.Subtitle
-                            </h3>
-                        </a>
-                        <p class="post-meta">
-                            Posted by
-                            <a href="#">@record.UserName</a>
-                            @if (@record.DateUpdated == null)
-                            {
-                                @record.DateCreated
-                            }
-                            else
-                            {
-                                @record.DateUpdated
-                            }
-                        </p>
-                    </div>
-                    <hr>
-                }
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="post-preview">
+                <a href="@Url.Action("SamplePost", "Blog")">
+                    <h2 class="post-title">Sample Post</h2>
+                    <h3 class="post-subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</h3>
+                </a>
+                <p class="post-meta">
+                    Posted by
+                    <a href="#">E.J Bulaong</a>
+                    @DateTime.Now.ToString("MM/dd/yyyy h:mm tt")
+                </p>
             </div>
+            <hr>
+            @foreach (var record in Model)
+            {
+                <div class="post-preview">
+                    <a href="@Url.Action("BlogPost", "Blog", new { id = record.Id })">
+                        <h2 class="post-title">
+                            @record.Title
+                        </h2>
+                        <h3 class="post-subtitle">
+                            @record.Subtitle
+                        </h3>
+                    </a>
+                    <p class="post-meta">
+                        Posted by
+                        <a href="#">@record.UserName</a>
+                        @if (@record.DateUpdated == null)
+                        {
+                            @record.DateCreated
+                        }
+                        else
+                        {
+                            @record.DateUpdated
+                        }
+                    </p>
+                </div>
+                <hr>
+            }
         </div>
     </div>
-}
+</div>

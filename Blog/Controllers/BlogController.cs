@@ -27,8 +27,10 @@ namespace Blog.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+            var user = User.IsInRole("Admin");
+
             var model = (from b in DbContext.Posts
-                         where b.Published == true
+                         where (user ? (b.Published == true || b.Published == false) : b.Published == true)
                          select new IndexBlogViewModel
                          {
                              Id = b.Id,
@@ -39,7 +41,21 @@ namespace Blog.Controllers
                              DateCreated = b.DateCreated,
                              DateUpdated = b.DateUpdated
                          }).ToList();
+
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult SamplePost()
+        {
+            var userId = User.Identity.GetUserId();
+
+            if (userId == null)
+            {
+                return RedirectToAction(nameof(AccountController.Login), "Account");
+            }
+
+            return View();
         }
 
         [HttpGet]
@@ -48,13 +64,6 @@ namespace Blog.Controllers
             if (!id.HasValue)
             {
                 return RedirectToAction(nameof(BlogController.Index));
-            }
-
-            var userId = User.Identity.GetUserId();
-            
-            if (userId == null)
-            {
-                return RedirectToAction(nameof(AccountController.Login), "Account");
             }
 
             var model = (from b in DbContext.Posts
@@ -194,7 +203,7 @@ namespace Blog.Controllers
             var userId = User.Identity.GetUserId();
 
             var postToEdit = (from b in DbContext.Posts
-                              where b.Id == id &&  b.UserId == userId
+                              where b.Id == id && b.UserId == userId
                               select b).FirstOrDefault();
 
             postToEdit.Title = model.Title;
@@ -223,7 +232,7 @@ namespace Blog.Controllers
                                 where b.Id == id && b.UserId == userId
                                 select b).FirstOrDefault();
 
-            if(postToDelete != null)
+            if (postToDelete != null)
             {
                 DbContext.Posts.Remove(postToDelete);
                 DbContext.SaveChanges();
