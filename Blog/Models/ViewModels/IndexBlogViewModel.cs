@@ -14,5 +14,6 @@ namespace Blog.Models.ViewModels
         public DateTime DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
         public string UserName { get; set; }
+        public string Slug { get; set; }
     }
 }

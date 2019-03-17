@@ -39,10 +39,42 @@ namespace Blog.Controllers
                              Body = b.Body,
                              UserName = b.User.UserName,
                              DateCreated = b.DateCreated,
-                             DateUpdated = b.DateUpdated
+                             DateUpdated = b.DateUpdated,
+                             Slug = b.Slug,
                          }).ToList();
 
             return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Index(string searchInput)
+        {
+            if (searchInput == null)
+            {
+                return RedirectToAction(nameof(BlogController.Index));
+            }
+
+            var user = User.IsInRole("Admin");
+
+            var model = (from b in DbContext.Posts
+                         where (user ? (b.Published == true || b.Published == false) : b.Published == true)
+                         select new IndexBlogViewModel
+                         {
+                             Id = b.Id,
+                             Title = b.Title,
+                             Subtitle = b.Subtitle,
+                             Body = b.Body,
+                             UserName = b.User.UserName,
+                             DateCreated = b.DateCreated,
+                             DateUpdated = b.DateUpdated,
+                             Slug = b.Slug,
+                         }).ToList();
+
+            var filteredModel = (from b in model
+                                 where (b.Title.ToLower()).Contains(searchInput.ToLower())
+                                 select b).ToList();
+
+            return View(filteredModel);
         }
 
         [HttpGet]
@@ -59,15 +91,15 @@ namespace Blog.Controllers
         }
 
         [HttpGet]
-        public ActionResult BlogPost(int? id)
+        public ActionResult BlogPost(string slug)
         {
-            if (!id.HasValue)
+            if (slug == null)
             {
                 return RedirectToAction(nameof(BlogController.Index));
             }
 
             var model = (from b in DbContext.Posts
-                         where b.Id == id
+                         where b.Slug == slug
                          select new BlogPostViewModel
                          {
                              Id = b.Id,
@@ -115,6 +147,11 @@ namespace Blog.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
+            if (User.Identity.Name != "admin@blog.com")
+            {
+                return RedirectToAction(nameof(BlogController.Index));
+            }
+
             return View();
         }
 
@@ -145,6 +182,21 @@ namespace Blog.Controllers
             post.UserId = userId;
 
             DbContext.Posts.Add(post);
+            DbContext.SaveChanges();
+
+            var slugDuplicate = (from b in DbContext.Posts
+                                 where b.Title == post.Title
+                                 select b).FirstOrDefault();
+
+            if (slugDuplicate != null)
+            {
+                post.Slug = $"{post.GetSlug(post.Title)}-{post.Id}";
+            }
+            else
+            {
+                post.Slug = post.GetSlug(post.Title);
+            }
+
             DbContext.SaveChanges();
 
             return RedirectToAction(nameof(BlogController.ManagePosts));

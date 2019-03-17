@@ -16,9 +16,10 @@
     </div>
 </header>
 
+
 <div class="container">
     <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="col-lg-9 col-md-9 mx-auto">
             <div class="post-preview">
                 <a href="@Url.Action("SamplePost", "Blog")">
                     <h2 class="post-title">Sample Post</h2>
@@ -34,7 +35,7 @@
             @foreach (var record in Model)
             {
                 <div class="post-preview">
-                    <a href="@Url.Action("BlogPost", "Blog", new { id = record.Id })">
+                    <a href="@Url.Action("BlogPost", "Blog", new {slug = record.Slug })">
                         <h2 class="post-title">
                             @record.Title
                         </h2>
@@ -57,6 +58,15 @@
                 </div>
                 <hr>
             }
+        </div>
+        <div class="col-lg-3 col-md-3 mx-auto">
+            <div class="active-cyan-4 mb-4 p-3 mb-2 bg-secondary text-white">
+                <form method="post">
+                    <input name="searchInput" class="form-control" type="text" placeholder="Search" aria-label="Search">
+                    <button type="submit" class="btn btn-success">Search</button>
+                </form>
+
+            </div>
         </div>
     </div>
 </div>
