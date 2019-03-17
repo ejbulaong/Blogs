@@ -9,7 +9,7 @@ namespace Blog.Models.Domain
 {
     public class Post
     {
-        public int Id { get; set;}
+        public int Id { get; set; }
         public string Title { get; set; }
         public string Subtitle { get; set; }
         public string Body { get; set; }
@@ -18,6 +18,7 @@ namespace Blog.Models.Domain
         public DateTime DateCreated { get; set; }
         public DateTime? DateUpdated { get; set; }
         public string Slug { get; set; }
+        public List<Comment> Comments{get; set;}
      
         public virtual ApplicationUser User { get; set; }
         public string UserId { get; set; }
@@ -25,6 +26,7 @@ namespace Blog.Models.Domain
         public Post()
         {            
             DateCreated = DateTime.Now;
+            Comments = new List<Comment>();
         }
 
         public string GetSlug(string value)

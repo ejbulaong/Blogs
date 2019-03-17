@@ -12,10 +12,12 @@ namespace Blog.Models
     public class ApplicationUser : IdentityUser
     {
         public List<Post> Posts { get; set; }
+        public List<Comment> Comments { get; set; }
 
         public ApplicationUser()
         {
             Posts = new List<Post>();
+            Comments = new List<Comment>();
         }
 
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
