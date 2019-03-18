@@ -43,3 +43,29 @@
     </div>
 </article>
 
+<!-- Comment Section -->
+<div class="card card-outline-secondary my-4">
+    <div class="card-header">
+        Comment Section
+    </div>
+    <div class="card-body">
+        @if (!Model.Comments.Any())
+        {
+            <p>No Comments yet.</p>
+        }
+        else
+        {
+            foreach (var comment in Model.Comments)
+            {
+                <p>@comment.Body</p>
+                <small class="text-muted">Posted by @comment.User.UserName on @comment.DateCreated</small>
+                <hr>
+            }
+        }
+
+        <form method="post" action="@Url.Action("BlogPost","Blog",new {id=Model.Id, slug=Model.Slug})">
+            @Html.TextBoxFor(blog => blog.NewComment, new { @class = "form-control", placeholder = "Type a comment here" })
+            <button type="submit" class="btn btn-success">Save Comment</button>
+        </form>
+    </div>
+</div>

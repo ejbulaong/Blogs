@@ -109,9 +109,34 @@ namespace Blog.Controllers
                              UserName = b.User.UserName,
                              PhotoUrl = b.PhotoUrl,
                              DateCreated = b.DateCreated,
-                             DateUpdated = b.DateUpdated
+                             DateUpdated = b.DateUpdated,
+                             Comments = b.Comments,
+                             Slug = b.Slug
                          }).FirstOrDefault();
             return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult BlogPost(BlogPostViewModel model)
+        {
+            if (model == null || model.NewComment == "")
+            {
+                return RedirectToAction(nameof(BlogController.Index));
+            }
+
+            var userId = User.Identity.GetUserId();
+            var commentToSave = new Comment();
+
+            commentToSave.Body = model.NewComment;
+            commentToSave.DateCreated = DateTime.Now;
+            commentToSave.DateUpdated = DateTime.Now;
+            commentToSave.PostId = model.Id;
+            commentToSave.UserId = userId;
+
+            DbContext.Comments.Add(commentToSave);
+            DbContext.SaveChanges();
+
+            return RedirectToAction(nameof(BlogController.BlogPost), new { slug = model.Slug });
         }
 
         [HttpGet]

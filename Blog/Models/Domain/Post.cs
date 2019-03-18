@@ -19,7 +19,7 @@ namespace Blog.Models.Domain
         public DateTime? DateUpdated { get; set; }
         public string Slug { get; set; }
         public List<Comment> Comments{get; set;}
-     
+
         public virtual ApplicationUser User { get; set; }
         public string UserId { get; set; }
 

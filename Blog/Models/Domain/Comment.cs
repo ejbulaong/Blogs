@@ -14,7 +14,7 @@ namespace Blog.Models.Domain
         public string UpdatedReason { get; set; }
 
         public virtual Post Post { get; set; }
-        public string PostId { get; set; }
+        public int PostId { get; set; }
 
         public virtual ApplicationUser User { get; set; }
         public string UserId { get; set; }
