@@ -119,12 +119,18 @@ namespace Blog.Controllers
         [HttpPost]
         public ActionResult BlogPost(BlogPostViewModel model)
         {
-            if (model == null || model.NewComment == "")
+            var userId = User.Identity.GetUserId();
+
+            if (userId == null)
+            {
+                return RedirectToAction(nameof(AccountController.Login), "Account");
+            }
+
+            if (model == null || model.NewComment == null || model.NewComment == "")
             {
                 return RedirectToAction(nameof(BlogController.Index));
             }
 
-            var userId = User.Identity.GetUserId();
             var commentToSave = new Comment();
 
             commentToSave.Body = model.NewComment;
@@ -132,6 +138,7 @@ namespace Blog.Controllers
             commentToSave.DateUpdated = DateTime.Now;
             commentToSave.PostId = model.Id;
             commentToSave.UserId = userId;
+            commentToSave.Slug = model.Slug;
 
             DbContext.Comments.Add(commentToSave);
             DbContext.SaveChanges();
@@ -336,6 +343,91 @@ namespace Blog.Controllers
             }
 
             return null;
+        }
+
+        [HttpGet]
+        public ActionResult EditComment(int? id)
+        {
+            if (id == null)
+            {
+                return RedirectToAction(nameof(BlogController.Index));
+            }
+
+            var model = (from c in DbContext.Comments
+                         where c.Id == id
+                         select new EditCommentViewModel
+                         {
+                             Id = c.Id,
+                             Body = c.Body,
+                             DateUpdated = c.DateUpdated,
+                             DateCreated = c.DateCreated,
+                             UpdatedReason = c.UpdatedReason,
+                             User = c.User,
+                             Slug = c.Slug
+                         }).FirstOrDefault();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, Moderator")]
+        public ActionResult EditComment(int? id, EditCommentViewModel model, string userName)
+        {
+            if (!ModelState.IsValid)
+            {
+                var user = (from u in DbContext.Users
+                            where u.UserName == userName
+                            select u).FirstOrDefault();
+
+                model.User = user;
+
+                return View(model);
+            }
+
+            if (id == null)
+            {
+                return RedirectToAction(nameof(BlogController.Index));
+            }
+
+            var commentToEdit = (from c in DbContext.Comments
+                                 where c.Id == id
+                                 select c).FirstOrDefault();
+
+            if (commentToEdit == null)
+            {
+                return RedirectToAction(nameof(BlogController.Index));
+            }
+
+            commentToEdit.Body = model.Body;
+            commentToEdit.DateUpdated = DateTime.Now;
+            commentToEdit.UpdatedReason = model.UpdatedReason;
+            commentToEdit.Slug = model.Slug;
+
+            DbContext.SaveChanges();
+
+            return RedirectToAction(nameof(BlogController.BlogPost), new { slug = commentToEdit.Slug });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin, Moderator")]
+        public ActionResult DeleteComment(int? id, string postSlug)
+        {
+            if (!id.HasValue)
+            {
+                return RedirectToAction(nameof(BlogController.Index));
+            }
+
+            var commentToDelete = (from c in DbContext.Comments
+                                   where c.Id == id
+                                   select c).FirstOrDefault();
+
+            if (commentToDelete != null)
+            {
+                DbContext.Comments.Remove(commentToDelete);
+                DbContext.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(BlogController.BlogPost), new { slug = postSlug });
         }
     }
 }

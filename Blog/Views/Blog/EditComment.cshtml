@@ -1,0 +1,30 @@
+﻿@model EditCommentViewModel
+
+@{
+    ViewBag.Title = "Edit Comment";
+}
+
+<h1>.</h1>
+<h2>@ViewBag.Title</h2>
+
+<form method="post" enctype="multipart/form-data" action="@Url.Action("EditComment","Blog",new { dateCreated = Model.DateCreated, userName = Model.User.UserName,slug= Model.Slug})">
+    @Html.ValidationSummary(false)
+
+    <p>@Model.User.UserName</p>
+    <p>@Model.DateCreated</p>
+
+    <div class="form-group">
+        @Html.LabelFor(comment => comment.Body, "Comment:")
+        @Html.TextAreaFor(comment => comment.Body, new { @class = "form-control", placeholder = "Body", rows = 5, columns = 5 })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(comment => comment.UpdatedReason, "Reason for Update:")
+        @Html.TextBoxFor(comment => comment.UpdatedReason, new { @class = "form-control", placeholder = "Reason for Update" })
+    </div>
+
+    <div class="">     
+        <button type="submit" class="btn btn-success">Submit</button>
+        <a class="btn btn-danger" href="@Url.Action("Index", "Blog")"> Cancel </a>
+    </div>
+</form>

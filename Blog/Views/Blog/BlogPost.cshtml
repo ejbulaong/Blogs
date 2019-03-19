@@ -4,6 +4,10 @@
     ViewBag.Title = "BlogPost";
 }
 
+@section scripts {
+    <script src="~/Scripts/blogpost.js" type="text/javascript"></script>
+}
+
 <!-- Page Header -->
 <header class="masthead" style="background-image: url('@Url.Content(Model.PhotoUrl)')">
     <div class="overlay"></div>
@@ -59,6 +63,24 @@
             {
                 <p>@comment.Body</p>
                 <small class="text-muted">Posted by @comment.User.UserName on @comment.DateCreated</small>
+                if (User.Identity.Name == "admin@blog.com" || User.Identity.Name == "moderator@blog.com")
+                {
+                <div>
+                    @if (comment.UpdatedReason == null)
+                    {
+                        <p>Not updated yet.</p>
+                    }
+                    else
+                    {
+                        <p>Edited</p>
+                        <p>Reason for Updating: @comment.UpdatedReason</p>
+                    }
+                    <a href="@Url.Action("EditComment", "Blog", new { id = comment.Id, postSlug=Model.Slug})">Edit</a>
+                    <form method="post" action="@Url.Action("DeleteComment", "Blog", new { id = comment.Id, postSlug=Model.Slug})">
+                        <a href="#" class="btn-delete-comment">Delete</a>
+                    </form>
+                </div>
+                }
                 <hr>
             }
         }
