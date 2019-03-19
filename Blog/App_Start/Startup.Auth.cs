@@ -6,6 +6,7 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using Blog.Models;
+using Owin.Security.Providers.LinkedIn;
 
 namespace Blog
 {
@@ -45,7 +46,7 @@ namespace Blog
             // This is similar to the RememberMe option when you log in.
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
-            // Uncomment the following lines to enable logging in with third party login providers
+            //Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
             //    clientId: "",
             //    clientSecret: "");
@@ -62,6 +63,13 @@ namespace Blog
             {
                 ClientId = "1092960311477-jl9257l1kbqeuijqqae275cou0ove597.apps.googleusercontent.com",
                 ClientSecret = "RLvbrHbasdVgj3w2pSNxm8fe"
+            });
+
+
+            app.UseLinkedInAuthentication(new LinkedInAuthenticationOptions()
+            {
+                ClientId = "78oid87qt0mv2d",
+                ClientSecret = "D8jeigWRd05etICT"
             });
         }
     }
