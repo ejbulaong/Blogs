@@ -27,7 +27,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href=@Url.Action("Index","Home")>Home</a>
                     </li>
-                    @if (User.Identity.Name == "admin@blog.com")
+                    @if (User.IsInRole("Admin"))
                     {
                         <li class="nav-item">
                             <a class="nav-link" href=@Url.Action("ManagePosts","Blog")>Manage Posts</a>

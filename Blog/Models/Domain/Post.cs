@@ -31,26 +31,27 @@ namespace Blog.Models.Domain
 
         public string GetSlug(string value)
         {
-            //First to lower case
-            value = value.ToLowerInvariant();
+            var valueHolder = new StringBuilder();
+            foreach (var c in value)
+            {
+                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c ==' '))
+                {
+                    valueHolder.Append(c);
+                }
+            }
 
-            //Remove all accents
-            var bytes = Encoding.GetEncoding("Cyrillic").GetBytes(value);
-            value = Encoding.ASCII.GetString(bytes);
+            string newValue = valueHolder.ToString().ToLower();
 
-            //Replace spaces
-            value = Regex.Replace(value, @"\s", "-", RegexOptions.Compiled);
+            var slug =newValue.Replace(" ", "-");           
 
-            //Remove invalid chars
-            value = Regex.Replace(value, @"[^a-z0-9\s-_]", "", RegexOptions.Compiled);
+            var lastChar = slug.Substring(slug.Length - 1);
 
-            //Trim dashes from end
-            value = value.Trim('-', '_');
+            if (lastChar == "-")
+            {
+                slug = slug.Substring(0, slug.Length - 1);
+            }
 
-            //Replace double occurences of - or _
-            value = Regex.Replace(value, @"([-_]){2,}", "$1", RegexOptions.Compiled);
-
-            return value;
-        }
+            return slug;
+        }       
     }
 }

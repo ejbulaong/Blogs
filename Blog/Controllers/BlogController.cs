@@ -100,6 +100,7 @@ namespace Blog.Controllers
                              Comments = b.Comments,
                              Slug = b.Slug
                          }).FirstOrDefault();
+
             return View(model);
         }
 
@@ -200,7 +201,7 @@ namespace Blog.Controllers
             DbContext.SaveChanges();
 
             var slugDuplicate = (from b in DbContext.Posts
-                                 where b.Title == post.Title
+                                 where b.Title == post.Title && b.Id != post.Id
                                  select b).FirstOrDefault();
 
             if (slugDuplicate != null)
@@ -271,7 +272,7 @@ namespace Blog.Controllers
             postToEdit.Body = model.Body;
             postToEdit.Published = model.Published;
             postToEdit.DateUpdated = DateTime.Now;
-
+           
             if (model.Photo == null)
             {
                 var photoUrl = (from blog in DbContext.Posts
