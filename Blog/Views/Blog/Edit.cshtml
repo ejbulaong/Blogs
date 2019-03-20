@@ -33,8 +33,14 @@
     </div>
 
     <div class="form-group">
+        <p>Current Photo: @Model.PhotoUrl</p>
         @Html.LabelFor(blog => blog.Photo, "Photo:")
-        <input type="file" name="Photo"/>
+        <input type="file" name="Photo" />
+    </div>
+
+    <div class="row">
+        <div class="col-*-*"></div>
+        <div class="col-*-*"></div>
     </div>
 
     <div class="form-group">
@@ -47,6 +53,6 @@
 
     <div class="">
         <button type="submit" class="btn btn-success">Submit</button>
-        <a class="btn btn-danger" href="@Url.Action("ManagePosts", "Blog")"> Cancel </a>
+        <a class="btn btn-danger" href="@Url.Action("ManagePosts", "Blog",new {currentURL = Model.PhotoUrl })"> Cancel </a>
     </div>
 </form>

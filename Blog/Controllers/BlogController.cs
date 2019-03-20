@@ -78,19 +78,6 @@ namespace Blog.Controllers
         }
 
         [HttpGet]
-        public ActionResult SamplePost()
-        {
-            var userId = User.Identity.GetUserId();
-
-            if (userId == null)
-            {
-                return RedirectToAction(nameof(AccountController.Login), "Account");
-            }
-
-            return View();
-        }
-
-        [HttpGet]
         public ActionResult BlogPost(string slug)
         {
             if (slug == null)
@@ -179,15 +166,11 @@ namespace Blog.Controllers
         [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
-            if (User.Identity.Name != "admin@blog.com")
-            {
-                return RedirectToAction(nameof(BlogController.Index));
-            }
-
             return View();
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Create(CreateViewModel model)
         {
             if (model.Body == null || model.Photo == null)
@@ -264,6 +247,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Edit(int? id, EditViewModel model)
         {
             if (!id.HasValue)
@@ -271,18 +255,10 @@ namespace Blog.Controllers
                 return RedirectToAction(nameof(BlogController.ManagePosts));
             }
 
-            if (model.Body == null || model.Photo == null)
+            if (model.Body == null)
             {
                 return View();
-            }
-
-            var fileExtension = Path.GetExtension(model.Photo.FileName).ToLower();
-
-            if (!AllowedExtenions.Contains(fileExtension))
-            {
-                ModelState.AddModelError("", "File extension is not allowed");
-                return View();
-            }
+            }           
 
             var userId = User.Identity.GetUserId();
 
@@ -295,7 +271,27 @@ namespace Blog.Controllers
             postToEdit.Body = model.Body;
             postToEdit.Published = model.Published;
             postToEdit.DateUpdated = DateTime.Now;
-            postToEdit.PhotoUrl = UploadFile(model.Photo);
+
+            if (model.Photo == null)
+            {
+                var photoUrl = (from blog in DbContext.Posts
+                                where blog.Id == id
+                                select blog.PhotoUrl).FirstOrDefault();
+
+                postToEdit.PhotoUrl = photoUrl;
+            }
+            else
+            {
+                var fileExtension = Path.GetExtension(model.Photo.FileName).ToLower();
+
+                if (!AllowedExtenions.Contains(fileExtension))
+                {
+                    ModelState.AddModelError("", "File extension is not allowed");
+                    return View();
+                }
+
+                postToEdit.PhotoUrl = UploadFile(model.Photo);
+            }
 
             DbContext.SaveChanges();
 
@@ -303,6 +299,7 @@ namespace Blog.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public ActionResult Delete(int? id)
         {
             if (!id.HasValue)
@@ -346,6 +343,7 @@ namespace Blog.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Moderator")]
         public ActionResult EditComment(int? id)
         {
             if (id == null)

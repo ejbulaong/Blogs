@@ -20,44 +20,40 @@
 <div class="container">
     <div class="row">
         <div class="col-lg-9 col-md-9 mx-auto">
-            <div class="post-preview">
-                <a href="@Url.Action("SamplePost", "Blog")">
-                    <h2 class="post-title">Sample Post</h2>
-                    <h3 class="post-subtitle">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</h3>
-                </a>
-                <p class="post-meta">
-                    Posted by
-                    <a href="#">E.J Bulaong</a>
-                    @DateTime.Now.ToString("MM/dd/yyyy h:mm tt")
-                </p>
-            </div>
-            <hr>
-            @foreach (var record in Model)
+            @if (!Model.Any())
             {
-                <div class="post-preview">
-                    <a href="@Url.Action("BlogPost", "Blog", new {slug = record.Slug })">
-                        <h2 class="post-title">
-                            @record.Title
-                        </h2>
-                        <h3 class="post-subtitle">
-                            @record.Subtitle
-                        </h3>
-                    </a>
-                    <p class="post-meta">
-                        Posted by
-                        <a href="#">@record.UserName</a>
-                        @if (@record.DateUpdated == null)
-                        {
-                            @record.DateCreated
-                        }
-                        else
-                        {
-                            @record.DateUpdated
-                        }
-                    </p>
-                </div>
-                <hr>
+                <h3>Sorry No Blogs to show!!!</h3>
             }
+            else
+            {
+                foreach (var record in Model)
+                {
+                    <div class="post-preview">
+                        <a href="@Url.Action("BlogPost", "Blog", new {slug = record.Slug })">
+                            <h2 class="post-title">
+                                @record.Title
+                            </h2>
+                            <h3 class="post-subtitle">
+                                @record.Subtitle
+                            </h3>
+                        </a>
+                        <p class="post-meta">
+                            Posted by
+                            <a>@record.UserName</a>
+                            @if (@record.DateUpdated == null)
+                            {
+                                @record.DateCreated
+                            }
+                            else
+                            {
+                                @record.DateUpdated
+                            }
+                        </p>
+                    </div>
+                    <hr>
+                }
+            }
+
         </div>
         <div class="col-lg-3 col-md-3 mx-auto">
             <div class="active-cyan-4 mb-4 p-3 mb-2 bg-secondary text-white">

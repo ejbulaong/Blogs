@@ -61,25 +61,28 @@
         {
             foreach (var comment in Model.Comments)
             {
-                <p>@comment.Body</p>
+                <p class="comment">@comment.Body</p>
                 <small class="text-muted">Posted by @comment.User.UserName on @comment.DateCreated</small>
                 if (User.Identity.Name == "admin@blog.com" || User.Identity.Name == "moderator@blog.com")
                 {
-                <div>
+                <div class="comment-admin-container">
                     @if (comment.UpdatedReason == null)
                     {
-                        <p>Not updated yet.</p>
+                        <p class="comment comment-admin">Update:</p>
+                        <p class="comment comment-update">Not updated yet.</p>
                     }
                     else
                     {
-                        <p>Edited</p>
-                        <p>Reason for Updating: @comment.UpdatedReason</p>
+                        <p class="comment comment-admin">Update:</p>
+                        <p class="comment comment-update">Reason for Updating: @comment.UpdatedReason</p>
                     }
-                    <a href="@Url.Action("EditComment", "Blog", new { id = comment.Id, postSlug=Model.Slug})">Edit</a>
-                    <form method="post" action="@Url.Action("DeleteComment", "Blog", new { id = comment.Id, postSlug=Model.Slug})">
-                        <a href="#" class="btn-delete-comment">Delete</a>
-                    </form>
                 </div>
+                    <div class="comment-admin-container">
+                        <a class="comment comment-admin" href="@Url.Action("EditComment", "Blog", new { id = comment.Id, postSlug=Model.Slug})">Edit</a>
+                        <form method="post" action="@Url.Action("DeleteComment", "Blog", new { id = comment.Id, postSlug=Model.Slug})">
+                            <a href="#" class="btn-delete-comment comment comment-admin">Delete</a>
+                        </form>
+                    </div>
                 }
                 <hr>
             }

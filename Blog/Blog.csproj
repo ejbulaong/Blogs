@@ -2200,7 +2200,6 @@
     <Content Include="Views\Blog\Create.cshtml" />
     <Content Include="Views\Blog\Edit.cshtml" />
     <Content Include="Views\Blog\BlogPost.cshtml" />
-    <Content Include="Views\Blog\SamplePost.cshtml" />
     <Content Include="Views\Blog\EditComment.cshtml" />
   </ItemGroup>
   <ItemGroup>
