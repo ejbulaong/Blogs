@@ -125,7 +125,7 @@ namespace Blog.Controllers
 
             commentToSave.Body = model.NewComment;
             commentToSave.DateCreated = DateTime.Now;
-            commentToSave.DateUpdated = DateTime.Now;
+            commentToSave.DateUpdated = null;
             commentToSave.PostId = model.Id;
             commentToSave.UserId = userId;
             commentToSave.Slug = model.Slug;

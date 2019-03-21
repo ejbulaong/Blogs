@@ -10,7 +10,7 @@ namespace Blog.Models.Domain
         public int Id { get; set; }
         public string Body { get; set; }
         public DateTime DateCreated { get; set; }
-        public DateTime DateUpdated { get; set; }
+        public DateTime? DateUpdated { get; set; }
         public string UpdatedReason { get; set; }
         public string Slug { get; set; }
 

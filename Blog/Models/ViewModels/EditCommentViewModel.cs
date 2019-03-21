@@ -12,7 +12,7 @@ namespace Blog.Models.ViewModels
         [Required]
         public string Body { get; set; }
         public DateTime DateCreated { get; set; }
-        public DateTime DateUpdated { get; set; }
+        public DateTime? DateUpdated { get; set; }
         [Required]
         public string UpdatedReason { get; set; }
         public string Slug { get; set; }
