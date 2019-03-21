@@ -71,7 +71,9 @@ namespace Blog.Controllers
                          }).ToList();
 
             var filteredModel = (from b in model
-                                 where (b.Title.ToLower()).Contains(searchInput.ToLower())
+                                 where (b.Title.ToLower()).Contains(searchInput.ToLower()) ||
+                                    (b.Slug.ToLower()).Contains(searchInput.ToLower()) ||
+                                    (b.Body.ToLower()).Contains(searchInput.ToLower())
                                  select b).ToList();
 
             return View(filteredModel);
